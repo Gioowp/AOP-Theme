@@ -169,6 +169,9 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		jQuery('body').on('click','.doAddNewObject', function(e){
 			e.preventDefault();
 
+
+
+
 //			document.getElementById('the-form')
 
 
@@ -186,7 +189,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 				contentType: false,
 				type: 'POST',
 				success: function(data){
-					alert(data);
+//					alert(data);
 
 
 				}
@@ -200,10 +203,35 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		jQuery('body').on('click','.doSaveObjects',function(e){
 			e.preventDefault();
 
+			var before = {};
+			var after = {};
+			jQuery('.aop-objects .objectsBefore .aopObject').each(function(e){
+				var newBefore = { obType: jQuery(this).attr('obType'),
+					rotDirect: jQuery(this).attr('rotDirect'),
+					rotCount: jQuery(this).attr('rotCount'),
+					zindex: jQuery(this).attr('zindex'),
+					animTime: jQuery(this).attr('animTime'),
+					fSize: jQuery(this).attr('fSize'),
+					fDimension: jQuery(this).attr('fDimension'),
+					fAlign: jQuery(this).attr('fAlign'),
+					fColor: jQuery(this).attr('fColor'),
+					moveLeft: jQuery(this).attr('moveLeft'),
+					moveTop: jQuery(this).attr('moveTop'),
+					opacity: jQuery(this).attr('opacity'),
+					sizeX: jQuery(this).attr('sizeX'),
+					sizeY: jQuery(this).attr('sizeY')
+				};
 
+				before[jQuery(this).attr('obId')] = newBefore;
+//				console.log(e);
+			});
 
-			console.log(222);
+			console.log(before);
 		});
+
+
+
+
 
 	jQuery('body').on('mousedown','.aopObject',function(){
 		if(jQuery(this).hasClass('active'))return getObParams();
