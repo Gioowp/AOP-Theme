@@ -177,6 +177,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 			console.log( jQuery('span',ob).text() );
 
 			jQuery('.aop-fields textarea[name=aopText]').val(jQuery('span',ob).text()).attr('obId', jQuery(ob).attr('obId')).addClass('liveEdit');
+			jQuery('.aop-fields h2 .red.note').show();
 		});
 
 		jQuery('body').on('keyup','.aop-fields .liveEdit[name=aopText]', function(e){
@@ -307,6 +308,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		if( jQuery('.aop-fields textarea[name=aopText]').hasClass('liveEdit') ){
 			jQuery('.aop-fields textarea[name=aopText]').attr('obId','').val('').removeClass('liveEdit');
+			jQuery('.aop-fields h2 .red.note').hide();
 		}
 
 		jQuery('.buildPlace .aopObject').removeClass('active')
