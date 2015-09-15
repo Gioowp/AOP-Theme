@@ -4,7 +4,7 @@
 function saveNewObject(){
 //	print_r($_POST);
 
-	$data = get_post_meta($_POST['posdId'], 'aopObjects', true);
+	$data = get_post_meta($_POST['postId'], 'aopObjects', true);
 
 	$data = json_decode($data, true);
 
@@ -13,7 +13,6 @@ function saveNewObject(){
 
 		$_POST['aopText'] = strip_tags($_POST['aopText']);
 
-		$new['bf']['obType'] = 'text';
 		$new['bf']['rotDirect'] = 'right';
 		$new['bf']['rotCount'] = '0';
 		$new['bf']['zindex'] = '5';
@@ -24,11 +23,10 @@ function saveNewObject(){
 		$new['bf']['fColor'] = '000';
 		$new['bf']['moveLeft'] = '0';
 		$new['bf']['moveTop'] = '0';
-		$new['bf']['opacity'] = '0';
+		$new['bf']['opacity'] = '1';
 		$new['bf']['sizeX'] = '100';
 		$new['bf']['sizeY'] = '';
 
-		$new['af']['obType'] = 'text';
 		$new['af']['rotDirect'] = 'right';
 		$new['af']['rotCount'] = '0';
 		$new['af']['zindex'] = '5';
@@ -39,11 +37,12 @@ function saveNewObject(){
 		$new['af']['fColor'] = '000';
 		$new['af']['moveLeft'] = '300';
 		$new['af']['moveTop'] = '0';
-		$new['af']['opacity'] = '0';
+		$new['af']['opacity'] = '1';
 		$new['af']['sizeX'] = '100';
 		$new['af']['sizeY'] = '';
 
 		$new['data'] = $_POST['aopText'];
+		$new['obType'] = 'text';
 
 		$data[] = $new;
 	}
@@ -54,7 +53,6 @@ function saveNewObject(){
 		$upload_overrides = array( 'test_form' => false );
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 
-		$new['bf']['obType'] = 'picture';
 		$new['bf']['rotDirect'] = 'right';
 		$new['bf']['rotCount'] = '0';
 		$new['bf']['zindex'] = '5';
@@ -65,11 +63,10 @@ function saveNewObject(){
 		$new['bf']['fColor'] = '000';
 		$new['bf']['moveLeft'] = '0';
 		$new['bf']['moveTop'] = '0';
-		$new['bf']['opacity'] = '0';
+		$new['bf']['opacity'] = '1';
 		$new['bf']['sizeX'] = '100';
 		$new['bf']['sizeY'] = '';
 
-		$new['af']['obType'] = 'picture';
 		$new['af']['rotDirect'] = 'right';
 		$new['af']['rotCount'] = '0';
 		$new['af']['zindex'] = '5';
@@ -80,20 +77,37 @@ function saveNewObject(){
 		$new['af']['fColor'] = '000';
 		$new['af']['moveLeft'] = '300';
 		$new['af']['moveTop'] = '0';
-		$new['af']['opacity'] = '0';
+		$new['af']['opacity'] = '1';
 		$new['af']['sizeX'] = '100';
 		$new['af']['sizeY'] = '';
 
 		$new['data'] = $movefile['url'];
+		$new['obType'] = 'picture';
 
 		$data[] = $new;
 	}
 
 
 	$data = json_encode($data);
-	update_post_meta($_POST['posdId'], 'aopObjects', $data);
+	update_post_meta($_POST['postId'], 'aopObjects', $data);
 
 	return $data;
+}
+
+
+function updateObject(){
+//	print_r($_POST);
+	$data = json_decode(stripslashes($_POST['data']),true);
+	print_r($data);
+
+	if(!is_array($data))return false;
+
+	$data = json_encode($data);
+	update_post_meta($_POST['postId'], 'aopObjects', $data);
+
+
+	return;
+
 }
 
 
