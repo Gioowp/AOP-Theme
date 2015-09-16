@@ -16,10 +16,10 @@
 get_header();
 
 
-$aopData = generateComponents($post->ID);
-
+$aopData = pagesList();
 
 //print_r($aopData);
+
 
 ?>
 <style>
@@ -48,12 +48,12 @@ $aopData = generateComponents($post->ID);
 			if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
 				// scroll up
 				console.log('up');
-				doNextAnim();
+				doPrevAnim();
 			}
 			else {
 				// scroll down
 				console.log('down');
-				doPrevAnim();
+				doNextAnim();
 			}
 
 		});
@@ -72,12 +72,17 @@ $aopData = generateComponents($post->ID);
 		var currentNavIndex = jQuery('nav li.current_page_item').index();
 		var navCount = jQuery('nav li').length;
 		var nextIndex = 1;
+		var currentPostId = jQuery('nav li.current_page_item a').attr('postId');
 
 		if(navCount > currentNavIndex)nextIndex = currentNavIndex+1;
 
-		console.log(nextIndex);
-		eval('animateObsBackward'+currentNavIndex)();
-		eval('animateObsForward'+nextIndex)();
+		var nextLi = jQuery('nav li').eq( nextIndex );
+		var nextPostId = jQuery( 'a', nextLi ).attr('postId');
+		console.log( jQuery( 'a', nextLi ).html() );
+
+		console.log(navCount+'||'+currentNavIndex+'--'+nextIndex+'///'+currentPostId+'--'+nextPostId);
+		eval('animateObsBackward'+currentPostId)();
+		eval('animateObsForward'+nextPostId)();
 
 
 	}
@@ -86,12 +91,16 @@ $aopData = generateComponents($post->ID);
 		var currentNavIndex = jQuery('nav li.current_page_item').index();
 		var navCount = jQuery('nav li').length;
 		var nextIndex = navCount;
+		var currentPostId = jQuery('nav li.current_page_item a').attr('postId');
 
 		if(currentNavIndex > 0)nextIndex = currentNavIndex-1;
 
-		console.log(nextIndex);
-		eval('animateObsBackward'+currentNavIndex)();
-		eval('animateObsForward'+nextIndex)();
+		var nextLi = jQuery('nav li').eq( nextIndex );
+		var nextPostId = jQuery( 'a', nextLi ).attr('postId');
+
+		console.log(navCount+'||'+currentNavIndex+'--'+nextIndex+'///'+currentPostId+'--'+nextPostId);
+		eval('animateObsBackward'+currentPostId)();
+		eval('animateObsForward'+nextPostId)();
 
 //		console.log(navCount);
 	}
@@ -116,9 +125,22 @@ function pagesList(){
 		'output_key'             => 'menu_order',
 		'nopaging'               => true,
 		'update_post_term_cache' => false );
-	$items = wp_get_nav_menu_items( $menu, $args );
+	$items = wp_get_nav_menu_items( 'Mainmenu', $args );
 
-	print_r($items);
+//	print '<pre>'; 	print_r($items);
+
+	$ret = ['dom'=>'','css'=>'','js'=>''];
+
+	foreach($items as $v){
+
+//		continue;
+		$part = generateComponents($v->object_id);
+		$ret['dom'] .= $part['dom'];
+		$ret['css'] .= $part['css'];
+		$ret['js'] .= $part['js'];
+	}
+
+	return $ret;
 
 }
 
@@ -126,6 +148,7 @@ function generateComponents($postId = ''){
 
 	$aopData = get_post_meta($postId, 'aopObjects', true);
 	$aopData = json_decode($aopData, true);
+	if(!is_array($aopData))$aopData=[];
 
 	return ['dom'=>generateDom($aopData, $postId), 'css'=>generateCss($aopData, $postId), 'js'=>generateJs($aopData, $postId)];
 }

@@ -138,3 +138,11 @@ require get_template_directory() . '/inc/customizer.php';
 if(is_admin()) {
 	require get_template_directory() . '/inc/admin.php';
 }
+
+
+add_filter( 'nav_menu_link_attributes', 'custom_nav_menu_link_attributes', 10, 3 );
+function custom_nav_menu_link_attributes( $atts, $item, $args ) {
+	$atts['postId'] = $item->object_id;
+
+	return $atts;
+}
