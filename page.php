@@ -23,6 +23,7 @@ $aopData = pagesList();
 
 ?>
 <style>
+	.current_page_item a{ color:#006505; background:#ccc;  }
 	.aopConatainer{ width:100%; background:#fafafa; min-height:500px; position:relative; overflow:hidden; }
 	.aopOb{ position:absolute; background:#ccc; }
 <?=$aopData['css']?>
@@ -70,17 +71,22 @@ $aopData = pagesList();
 
 	function doNextAnim(){
 		var currentNavIndex = jQuery('nav li.current_page_item').index();
-		var navCount = jQuery('nav li').length;
+		var navCount = jQuery('nav li').length-1;
 		var nextIndex = 1;
 		var currentPostId = jQuery('nav li.current_page_item a').attr('postId');
 
 		if(navCount > currentNavIndex)nextIndex = currentNavIndex+1;
 
-		var nextLi = jQuery('nav li').eq( nextIndex );
+		var nextLi = jQuery('nav li').eq( nextIndex-1 );
 		var nextPostId = jQuery( 'a', nextLi ).attr('postId');
-		console.log( jQuery( 'a', nextLi ).html() );
+
+//		console.log( jQuery( nextLi ).html() );
 
 		console.log(navCount+'||'+currentNavIndex+'--'+nextIndex+'///'+currentPostId+'--'+nextPostId);
+
+		jQuery('nav li').removeClass('current_page_item');
+		jQuery(nextLi).addClass('current_page_item');
+
 		eval('animateObsBackward'+currentPostId)();
 		eval('animateObsForward'+nextPostId)();
 
