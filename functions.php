@@ -116,7 +116,7 @@ add_action( 'widgets_init', 'advancedonepage_widgets_init' );
 function advancedonepage_scripts() {
 	wp_enqueue_style( 'advancedonepage-style', get_stylesheet_uri() );
 
-	wp_enqueue_script( 'advancedonepage-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
+	wp_enqueue_script( 'advancedonepage-navigation', get_template_directory_uri() . '/js/navigation.js', array('jquery'), '20120206', true );
 
 
 }
