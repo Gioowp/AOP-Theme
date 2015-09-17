@@ -3,7 +3,18 @@
 .note{ font-size:0.6em; }
 	.row{ width:99%; display:block; overflow:hidden; box-sizing:border-box; padding:10px;  }
 
-	.buildPlace{ width:600px; height:330px; background:#bdc3c7; position:relative; overflow:hidden; float:left; box-sizing:border-box; }
+
+.buildPlaceWrapper .borderer{ border:solid 1px #f00; width:500px; height:250px; position:absolute; z-index:9999; top:40px; left:50px; box-sizing:border-box; }
+
+.buildPlaceWrapper .borderer.brdt{ height:0; border-bottom:none; border-right:0; border-left:0; }
+.buildPlaceWrapper .borderer.brdb{ height:0; border-bottom:none; border-right:0; border-left:0; bottom:40px; top:auto; }
+
+.buildPlaceWrapper .borderer.brdr{ width:0; border-bottom:none; border-top:0; border-left:0; }
+.buildPlaceWrapper .borderer.brdl{ width:0; border-bottom:none; border-top:0; border-left:0; right:50px; left:auto; }
+
+
+.buildPlaceWrapper{ width:600px; height:330px; overflow:hidden; float:left; box-sizing:border-box; background:#bdc3c7; padding:0; position:relative; }
+	.buildPlace{ width:500px; height:250px; background:none; position:relative; overflow:visible; float:left; box-sizing:border-box; border:solid 1px #7f8c8d; margin:40px 50px; }
 	.buildPlace .aopObject{ width:30%; background:#fff; top:0; left:0; position:absolute; overflow:hidden; }
 	.buildPlace .aopObject img{ width:100%; }
 
@@ -13,7 +24,7 @@
 	.aopObject .acticon{ position:absolute; width:12px; height:12px; top:0; left:0; cursor:pointer; background:#ccc; box-sizing:border-box; padding:0; line-height:0.8; text-align:center; font-weight:bold; opacity:0.7; }
 	.aopObject .doEditOb{ left:13px; }
 
-	.active{ z-index:1111 !important; box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75); }
+	.active{ z-index:9998 !important; box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.75); }
 	.pull-right{ float:right; }
 	.pull-left{ float:left; }
 
@@ -156,12 +167,26 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 ?>
 
-	<div class="objectsBefore buildPlace">
-		<?=aopGetObjectList($rawData,'bf')?>
+	<div class="buildPlaceWrapper">
+		<div class="borderer brdt"></div>
+		<div class="borderer brdr"></div>
+		<div class="borderer brdb"></div>
+		<div class="borderer brdl"></div>
+
+		<div class="objectsBefore buildPlace">
+			<?=aopGetObjectList($rawData,'bf')?>
+		</div>
 	</div>
 
-	<div class="pull-right objectsAfter buildPlace">
-		<?=aopGetObjectList($rawData,'af')?>
+	<div class="buildPlaceWrapper pull-right">
+		<div class="borderer brdt"></div>
+		<div class="borderer brdr"></div>
+		<div class="borderer brdb"></div>
+		<div class="borderer brdl"></div>
+
+		<div class="pull-right objectsAfter buildPlace">
+			<?=aopGetObjectList($rawData,'af')?>
+		</div>
 	</div>
 
 
@@ -183,6 +208,13 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		jQuery('body').on('keyup','.aop-fields .liveEdit[name=aopText]', function(e){
 			jQuery(".buildPlace .aopObject[obId="+jQuery(this).attr('obId')+"] span").text( jQuery(this).val() );
+		});
+
+		jQuery('body').on('click','.doRemoveOb', function(e){
+			var aopObject = jQuery(this).closest('.aopObject').attr('obId');
+			jQuery('.buildPlace [obId='+aopObject+']').remove();
+
+
 		});
 
 
@@ -216,7 +248,14 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 					type: 'POST',
 					success: function(data){
 //					alert(data);
+						jQuery('.aop-fields textarea[name=aopText]').val('')
+						jQuery('.aop-fields input[name=aopFile]').val('');
 
+						data = jQuery.parseJSON( data );
+						jQuery('.buildPlace.objectsBefore').append(data.bf);
+						jQuery('.buildPlace.objectsAfter').append(data.af);
+
+						doDragResize();
 
 					}
 				});
@@ -248,22 +287,26 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		getObParams();
 	});
 
-	jQuery( ".aopObject" ).draggable({
-		stop: function( event, ui ) {
-			getObParams();
+
+
+
+		doDragResize();
+	});
+
+
+	function doDragResize(){
+		jQuery( ".aopObject" ).draggable({
+			stop: function( event, ui ) {
+				getObParams();
 //            console.log(event);
 //            console.log(ui.offset.top);
-		}
-	}).resizable({
-		stop: function( event, ui ) {
-			getObParams();
-		}
-	});
-
-
-
-	});
-
+			}
+		}).resizable({
+			stop: function( event, ui ) {
+				getObParams();
+			}
+		});
+	}
 
 	/// update objects positions
 	function saveUpdatedObjects(){
@@ -416,68 +459,3 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 </script>
 
-
-<?php
-
-
-function aopGetObjectsRaw($postId = 0){
-
-	$data = get_post_meta($postId, 'aopObjects', true);
-	$data = json_decode($data, true);
-
-//	print_r($data);
-
-	return $data;
-
-}
-
-function aopGetObjectList($objectsRaw = [], $position='bf'){
-	$ret = '';
-	if(!is_array($objectsRaw))return false;
-
-	foreach($objectsRaw as $k=>$v)$ret .= aopGetObjectCell($v, $position, $k);
-	return $ret;
-
-}
-
-function aopGetObjectCell($objectRaw = 0, $position='', $id=''){
-//print_r($objectRaw);
-
-	$val = $objectRaw['data'];
-	$obType = $objectRaw['obType'];
-	$obType = $obType == 'picture'?$obType:'text';
-//	print_r($objectRaw);
-	$objectRaw = $objectRaw[$position];
-
-	$edit = $obType!='picture'?"<div title='Edit above' class='doEditOb acticon'>E</div>":'';
-	if($obType=='picture')$val = "<img src='{$val}' />";
-	$ret = "<div class='aopObject' obId = '{$id}'
-				obType='{$obType}'
-				rotDirect='{$objectRaw['rotDirect']}'
-				rotCount='{$objectRaw['rotCount']}'
-				zindex='{$objectRaw['zindex']}'
-				animTime='{$objectRaw['animTime']}'
-				fSize='{$objectRaw['fSize']}'
-				fDimension='{$objectRaw['fDimension']}'
-				fAlign='{$objectRaw['fAlign']}'
-				fColor='{$objectRaw['fColor']}'
-				moveLeft='{$objectRaw['moveLeft']}'
-				moveTop='{$objectRaw['moveTop']}'
-				opacity='{$objectRaw['opacity']}'
-				sizeX='{$objectRaw['sizeX']}'
-				sizeY='{$objectRaw['sizeY']}'
-				style='z-index:{$objectRaw['zindex']};  text-align:{$objectRaw['fAlign']};
-				 left:{$objectRaw['moveLeft']}px; top:{$objectRaw['moveTop']}px;
-				  width:{$objectRaw['sizeX']}px; height:{$objectRaw['sizeY']}px; '
-
-				><span class='data' style='opacity:{$objectRaw['opacity']}; color:{$objectRaw['fColor']}; font-size:{$objectRaw['fSize']}{$objectRaw['fDimension']}; '>{$val}</span>
-
-				<div title='Remove' class='doRemoveOb acticon'>X</div>
-				{$edit}
-
-				</div>";
-	return $ret;
-
-	//<div title='Edit' class='doEditOb'>E</div>
-
-}

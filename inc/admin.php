@@ -5,10 +5,10 @@ function saveNewObject(){
 //	print_r($_POST);
 
 	$data = get_post_meta($_POST['postId'], 'aopObjects', true);
-
 	$data = json_decode($data, true);
 
 
+	$smartAf = $smartBf = '';
 	if(isset($_POST['aopText']) && !empty($_POST['aopText'])){
 
 		$_POST['aopText'] = strip_tags($_POST['aopText']);
@@ -45,6 +45,12 @@ function saveNewObject(){
 		$new['obType'] = 'text';
 
 		$data[] = $new;
+
+
+		$idd = count($data)-1;
+		$smartBf .= aopGetObjectCell($new, 'bf', $idd );
+		$smartAf .= aopGetObjectCell($new, 'af', $idd );
+
 	}
 
 	if(isset($_FILES['aopFile'])){
@@ -85,13 +91,17 @@ function saveNewObject(){
 		$new['obType'] = 'picture';
 
 		$data[] = $new;
+
+		$idd = count($data)-1;
+		$smartBf .= aopGetObjectCell($new, 'bf', $idd );
+		$smartAf .= aopGetObjectCell($new, 'af', $idd );
 	}
 
 
 	$data = json_encode($data);
 	update_post_meta($_POST['postId'], 'aopObjects', $data);
 
-	return $data;
+	return json_encode(['bf'=>$smartBf,'af'=>$smartAf]);
 }
 
 
@@ -141,6 +151,75 @@ function metaBoxForm(){
 	return;
 }
 
+
+
+////////////////////////
+
+function aopGetObjectsRaw($postId = 0){
+
+	$data = get_post_meta($postId, 'aopObjects', true);
+	$data = json_decode($data, true);
+
+//	print_r($data);
+
+	return $data;
+
+}
+
+function aopGetObjectList($objectsRaw = [], $position='bf'){
+	$ret = '';
+	if(!is_array($objectsRaw))return false;
+
+	foreach($objectsRaw as $k=>$v)$ret .= aopGetObjectCell($v, $position, $k);
+	return $ret;
+
+}
+
+function aopGetObjectCell($objectRaw = 0, $position='', $id=''){
+//print_r($objectRaw);
+
+	$val = $objectRaw['data'];
+	$obType = $objectRaw['obType'];
+	$obType = $obType == 'picture'?$obType:'text';
+//	print_r($objectRaw);
+	$objectRaw = $objectRaw[$position];
+
+	$edit = $obType!='picture'?"<div title='Edit above' class='doEditOb acticon'>E</div>":'';
+	if($obType=='picture'){
+		$val = "<img src='{$val}' style='opacity:{$objectRaw['opacity']};' />";
+	}else{
+		$val = "<span class='data' style='opacity:{$objectRaw['opacity']}; color:{$objectRaw['fColor']}; font-size:{$objectRaw['fSize']}{$objectRaw['fDimension']}; '>{$val}</span>";
+	}
+	$ret = "<div class='aopObject' obId = '{$id}'
+				obType='{$obType}'
+				rotDirect='{$objectRaw['rotDirect']}'
+				rotCount='{$objectRaw['rotCount']}'
+				zindex='{$objectRaw['zindex']}'
+				animTime='{$objectRaw['animTime']}'
+				fSize='{$objectRaw['fSize']}'
+				fDimension='{$objectRaw['fDimension']}'
+				fAlign='{$objectRaw['fAlign']}'
+				fColor='{$objectRaw['fColor']}'
+				moveLeft='{$objectRaw['moveLeft']}'
+				moveTop='{$objectRaw['moveTop']}'
+				opacity='{$objectRaw['opacity']}'
+				sizeX='{$objectRaw['sizeX']}'
+				sizeY='{$objectRaw['sizeY']}'
+				style='z-index:{$objectRaw['zindex']};  text-align:{$objectRaw['fAlign']};
+				 left:{$objectRaw['moveLeft']}px; top:{$objectRaw['moveTop']}px;
+				  width:{$objectRaw['sizeX']}px; height:{$objectRaw['sizeY']}px; '
+
+				>{$val}
+
+				<div title='Remove' class='doRemoveOb acticon'>X</div>
+				{$edit}
+
+				</div>";
+	return $ret;
+
+	//<div title='Edit' class='doEditOb'>E</div>
+
+}
 
 
 

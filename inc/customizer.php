@@ -159,14 +159,14 @@ function generateJs($aopData=[], $postId = ''){
 
 function calcPercent($val='', $type=''){
 	//// width, height, left, top
-	//// 600x330
+	//// 500x250
 
 	if(!is_numeric($val))return 0;
 	switch($type){
-		case 'width': return round(($val*100)/600);
-		case 'height': return round(($val*100)/330);
-		case 'left': return round(($val*100)/600);
-		case 'top': return round(($val*100)/330);
+		case 'width': return round(($val*100)/500);
+		case 'height': return round(($val*100)/250);
+		case 'left': return round(($val*100)/500);
+		case 'top': return round(($val*100)/250);
 	}
 
 	return 0;
