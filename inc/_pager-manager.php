@@ -3,7 +3,7 @@
 .note{ font-size:0.6em; }
 	.row{ width:99%; display:block; overflow:hidden; box-sizing:border-box; padding:10px;  }
 
-	.buildPlace{ width:600px; height:330px; background:#005082; position:relative; overflow:hidden; float:left; box-sizing:border-box; border:solid 1px #ccc; }
+	.buildPlace{ width:600px; height:330px; background:#bdc3c7; position:relative; overflow:hidden; float:left; box-sizing:border-box; }
 	.buildPlace .aopObject{ width:30%; background:#fff; top:0; left:0; position:absolute; overflow:hidden; }
 	.buildPlace .aopObject img{ width:100%; }
 
@@ -143,8 +143,6 @@
 			</div>
 
 
-
-
 	</div>
 
 
@@ -230,82 +228,10 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		jQuery('body').on('click','.doSaveObjects',function(e){
 			e.preventDefault();
-
-			var aopObject = {};
-			var after = {};
-			jQuery('.aop-objects .objectsBefore .aopObject').each(function(e){
-
-				var newBefore = { obType: jQuery(this).attr('obType'),
-					rotDirect: jQuery(this).attr('rotDirect'),
-					rotCount: jQuery(this).attr('rotCount'),
-					zindex: jQuery(this).attr('zindex'),
-					animTime: jQuery(this).attr('animTime'),
-					fSize: jQuery(this).attr('fSize'),
-					fDimension: jQuery(this).attr('fDimension'),
-					fAlign: jQuery(this).attr('fAlign'),
-					fColor: jQuery(this).attr('fColor'),
-					moveLeft: jQuery(this).attr('moveLeft'),
-					moveTop: jQuery(this).attr('moveTop'),
-					opacity: jQuery(this).attr('opacity'),
-					sizeX: jQuery(this).attr('sizeX'),
-					sizeY: jQuery(this).attr('sizeY')
-				};
-
-
-
-
-				var afOb = jQuery(".objectsAfter .aopObject[obId="+jQuery(this).attr('obId')+"]");
-
-				var newAfter = { obType: jQuery(afOb).attr('obType'),
-					rotDirect: jQuery(afOb).attr('rotDirect'),
-					rotCount: jQuery(afOb).attr('rotCount'),
-					zindex: jQuery(afOb).attr('zindex'),
-					animTime: jQuery(afOb).attr('animTime'),
-					fSize: jQuery(afOb).attr('fSize'),
-					fDimension: jQuery(afOb).attr('fDimension'),
-					fAlign: jQuery(afOb).attr('fAlign'),
-					fColor: jQuery(afOb).attr('fColor'),
-					moveLeft: jQuery(afOb).attr('moveLeft'),
-					moveTop: jQuery(afOb).attr('moveTop'),
-					opacity: jQuery(afOb).attr('opacity'),
-					sizeX: jQuery(afOb).attr('sizeX'),
-					sizeY: jQuery(afOb).attr('sizeY')
-				};
-
-
-				var source = '';
-				if(jQuery(this).attr('obType')=='text'){
-					source = jQuery('span.data',this).text();
-				}else{
-					source = jQuery('img',this).attr('src');
-				}
-
-				aopObject[jQuery(this).attr('obId')] = {bf: newBefore, af:newAfter, obType:jQuery(this).attr('obType'), data:source  };
-//				console.log(e);
-			});
-
-			console.log(aopObject);
-			var asJson = JSON.stringify(aopObject);
-
-
-			jQuery.ajax({
-				url: dinob.home_url+'/wp-admin/admin-ajax.php',
-				data: { action:'aopaa', aa:'updateObject', data:asJson, postId:<?=$_GET['post']?> },
-				type: 'POST',
-				success: function(data){
-//					alert(data);
-					console.log(data);
-
-
-				}
-			});
-
-
-//			console.log(asJson);
-
+			saveUpdatedObjects();
 		});
 
-
+		setInterval(saveUpdatedObjects, 30000);
 
 
 
@@ -337,6 +263,84 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 
 	});
+
+
+	/// update objects positions
+	function saveUpdatedObjects(){
+
+
+		var aopObject = {};
+		var after = {};
+		jQuery('.aop-objects .objectsBefore .aopObject').each(function(e){
+
+			var newBefore = { obType: jQuery(this).attr('obType'),
+				rotDirect: jQuery(this).attr('rotDirect'),
+				rotCount: jQuery(this).attr('rotCount'),
+				zindex: jQuery(this).attr('zindex'),
+				animTime: jQuery(this).attr('animTime'),
+				fSize: jQuery(this).attr('fSize'),
+				fDimension: jQuery(this).attr('fDimension'),
+				fAlign: jQuery(this).attr('fAlign'),
+				fColor: jQuery(this).attr('fColor'),
+				moveLeft: jQuery(this).attr('moveLeft'),
+				moveTop: jQuery(this).attr('moveTop'),
+				opacity: jQuery(this).attr('opacity'),
+				sizeX: jQuery(this).attr('sizeX'),
+				sizeY: jQuery(this).attr('sizeY')
+			};
+
+
+
+
+			var afOb = jQuery(".objectsAfter .aopObject[obId="+jQuery(this).attr('obId')+"]");
+
+			var newAfter = { obType: jQuery(afOb).attr('obType'),
+				rotDirect: jQuery(afOb).attr('rotDirect'),
+				rotCount: jQuery(afOb).attr('rotCount'),
+				zindex: jQuery(afOb).attr('zindex'),
+				animTime: jQuery(afOb).attr('animTime'),
+				fSize: jQuery(afOb).attr('fSize'),
+				fDimension: jQuery(afOb).attr('fDimension'),
+				fAlign: jQuery(afOb).attr('fAlign'),
+				fColor: jQuery(afOb).attr('fColor'),
+				moveLeft: jQuery(afOb).attr('moveLeft'),
+				moveTop: jQuery(afOb).attr('moveTop'),
+				opacity: jQuery(afOb).attr('opacity'),
+				sizeX: jQuery(afOb).attr('sizeX'),
+				sizeY: jQuery(afOb).attr('sizeY')
+			};
+
+
+			var source = '';
+			if(jQuery(this).attr('obType')=='text'){
+				source = jQuery('span.data',this).text();
+			}else{
+				source = jQuery('img',this).attr('src');
+			}
+
+			aopObject[jQuery(this).attr('obId')] = {bf: newBefore, af:newAfter, obType:jQuery(this).attr('obType'), data:source  };
+//				console.log(e);
+		});
+
+//		console.log(aopObject);
+		var asJson = JSON.stringify(aopObject);
+
+
+		jQuery.ajax({
+			url: dinob.home_url+'/wp-admin/admin-ajax.php',
+			data: { action:'aopaa', aa:'updateObject', data:asJson, postId:<?=$_GET['post']?> },
+			type: 'POST',
+			success: function(data){
+//					alert(data);
+//				console.log(data);
+
+
+			}
+		});
+
+		return false;
+
+	}
 
 
 	function getObParams(){
