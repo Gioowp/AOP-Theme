@@ -116,7 +116,7 @@ add_action( 'widgets_init', 'advancedonepage_widgets_init' );
 function advancedonepage_scripts() {
 	wp_enqueue_style( 'advancedonepage-style', get_stylesheet_uri() );
 
-	wp_enqueue_script( 'advancedonepage-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
+	wp_enqueue_script( 'advancedonepage-navigation', get_template_directory_uri() . '/js/navigation.js', array('jquery'), '20120206', true );
 
 
 }
@@ -137,4 +137,12 @@ require get_template_directory() . '/inc/customizer.php';
 
 if(is_admin()) {
 	require get_template_directory() . '/inc/admin.php';
+}
+
+
+add_filter( 'nav_menu_link_attributes', 'custom_nav_menu_link_attributes', 10, 3 );
+function custom_nav_menu_link_attributes( $atts, $item, $args ) {
+	$atts['postId'] = $item->object_id;
+
+	return $atts;
 }

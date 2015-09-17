@@ -525,24 +525,38 @@ a:active {
 	clear: both;
 	display: block;
 	float: left;
-	width: 100%;
+	width: auto;
+	position:absolute;
+	z-index:9999;
 }
 
 .main-navigation ul {
-	display: none;
+	display: block;
+	overflow:hidden;
 	list-style: none;
 	margin: 0;
-	padding-left: 0;
+	padding:10px;
+	box-sizing:border-box;
 }
 
 .main-navigation li {
 	float: left;
+	width:100%;
 	position: relative;
+	display:block;
+	margin:1px;
+	background:#95a5a6;
 }
 
 .main-navigation a {
 	display: block;
 	text-decoration: none;
+	text-transform:uppercase;
+	color:#fff;
+	background:#e74c3c;
+	font-weight:bold;
+	box-sizing:border-box;
+	padding:10px;
 }
 
 .main-navigation ul ul {
@@ -589,9 +603,9 @@ a:active {
 	left: 100%;
 }
 
-.main-navigation .current_page_item > a,
-.main-navigation .current-menu-item > a,
-.main-navigation .current_page_ancestor > a {
+.main-navigation .current_page_item > a {
+	color:#ecf0f1;
+	background:#c0392b;
 }
 
 /* Small menu. */
@@ -599,6 +613,11 @@ a:active {
 .main-navigation.toggled ul {
 	display: block;
 }
+
+
+
+
+
 
 @media screen and (min-width: 37.5em) {
 	.menu-toggle {
@@ -888,3 +907,8 @@ object {
 .gallery-caption {
 	display: block;
 }
+
+/* ///// aop page */
+
+.aopConatainer{ width:100%; background:#fafafa; min-height:100px; position:relative; overflow:hidden; }
+.aopOb{ position:absolute; }
