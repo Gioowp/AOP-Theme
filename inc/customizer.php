@@ -64,7 +64,7 @@ function generateDom($aopData=[], $postId = ''){
 
 	}
 
-	return "<div class='aopObsWrapper aopObs{$postId}'>".$ret."</div>";
+	return "<div class='aopObsWrapper aopObs{$postId}' style='display:none;'>".$ret."</div>";
 }
 
 
@@ -102,7 +102,9 @@ function generateJs($aopData=[], $postId = ''){
 		$rotateDirection = $bf['rotDirect']=='left'?'-':'';
 		$duration = $bf['animTime']*1000;
 
-		$forward .= "jQuery('.aopObs{$postId} .aopOb{$postId}{$k}').fadeIn(300).animate({
+		$forward .= "
+		jQuery( '.aopObs{$postId}' ).fadeIn(100);
+		jQuery('.aopObs{$postId} .aopOb{$postId}{$k}').fadeIn(300).animate({
 			width:'{$width}%',
 			height:'{$height}%',
 			left:'{$left}%',
@@ -110,6 +112,7 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
+				//easing: 'easeOutCirc',
 		        complete: function(){
 			      //jQuery( this ).fadeOut(100);
 			    }
@@ -135,8 +138,10 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
+				//easing: 'easeOutCirc',
 		        complete: function(){
-			      jQuery( this ).fadeOut(100);
+			      jQuery( '.aopObs{$postId}' ).fadeOut(300);
+
 			    }
 		}); ";
 	}

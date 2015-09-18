@@ -78,6 +78,21 @@
 
 				<input type="text" name="rotCount" placeholder="xx times" value="0" >
 			</label>
+
+			<label class="rotateConf">
+				Effect
+				<select name="animEffect">
+					<option>easeOutCirc</option>
+					<option>easeInOutExpo</option>
+					<option>easeOutExpo</option>
+					<option>easeOutQuint</option>
+					<option>easeOutQuart</option>
+					<option>easeOutBounce</option>
+				</select>
+
+				<input type="text" name="rotCount" placeholder="xx times" value="0" >
+			</label>
+
 			<label class="zindexConf">
 				Z-index
 				<input type="text" name="zindex" placeholder="Layering" value="1" >

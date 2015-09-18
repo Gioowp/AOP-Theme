@@ -10,11 +10,21 @@ jQuery(window).load(function(e){
 
 	//aopConatainer
 
-	console.log( jQuery( window ) );
+	//// start page
+	doAnimByIndex( jQuery('nav li:first a') );
+
 
 	jQuery('.aopConatainer').height( jQuery( window )[0]['innerHeight']-40 );
 
 	jQuery('body').on('DOMMouseScroll mousewheel',function(e){
+
+		var sec = Math.floor(Date.now() / 1000);
+		var logedSec = jQuery('.aopConatainer').attr('onGoing');
+		if((sec-logedSec)<1)return;
+
+		jQuery('.aopConatainer').attr('onGoing',sec);
+
+
 		if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
 			doPrevAnim();
 		} else {
@@ -28,6 +38,8 @@ jQuery(window).load(function(e){
 		e.preventDefault();
 		doAnimByIndex(this);
 	});
+
+
 
 
 });
@@ -48,8 +60,11 @@ function doAnimByIndex(thiss){
 	jQuery('nav li').removeClass('current_page_item');
 	jQuery(nextLi).addClass('current_page_item');
 
-	eval('animateObsBackward'+currentPostId)();
-	eval('animateObsForward'+nextPostId)();
+
+	if(currentPostId)eval('animateObsBackward'+currentPostId)();
+	if(nextPostId)eval('animateObsForward'+nextPostId)();
+
+
 
 
 }
@@ -73,9 +88,8 @@ function doNextAnim(){
 	jQuery('nav li').removeClass('current_page_item');
 	jQuery(nextLi).addClass('current_page_item');
 
-	eval('animateObsBackward'+currentPostId)();
-	eval('animateObsForward'+nextPostId)();
-
+	if(currentPostId)eval('animateObsBackward'+currentPostId)();
+	if(nextPostId)eval('animateObsForward'+nextPostId)();
 
 }
 
@@ -95,8 +109,8 @@ function doPrevAnim(){
 	jQuery('nav li').removeClass('current_page_item');
 	jQuery(nextLi).addClass('current_page_item');
 
-	eval('animateObsBackward'+currentPostId)();
-	eval('animateObsForward'+nextPostId)();
+	if(currentPostId)eval('animateObsBackward'+currentPostId)();
+	if(nextPostId)eval('animateObsForward'+nextPostId)();
 
 //		console.log(navCount);
 }
