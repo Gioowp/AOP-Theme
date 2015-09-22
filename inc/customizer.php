@@ -112,7 +112,7 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
-				//easing: 'easeOutCirc',
+				easing: 'easeOutCirc',
 		        complete: function(){
 			      //jQuery( this ).fadeOut(100);
 			    }
@@ -138,7 +138,7 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
-				//easing: 'easeOutCirc',
+				easing: 'easeOutQuint',
 		        complete: function(){
 			      jQuery( '.aopObs{$postId}' ).fadeOut(300);
 

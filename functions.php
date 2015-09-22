@@ -117,6 +117,7 @@ function advancedonepage_scripts() {
 	wp_enqueue_style( 'advancedonepage-style', get_stylesheet_uri() );
 
 	wp_enqueue_script( 'advancedonepage-navigation', get_template_directory_uri() . '/js/navigation.js', array('jquery'), '20120206', true );
+	wp_enqueue_script( 'jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.js', array('jquery'), '20120206', true );
 
 
 }
