@@ -1,6 +1,15 @@
 <?php
 
 
+//add_filter('media_send_to_editor', 'media_to_editor', 1, 3);
+add_filter('image_send_to_editor', 'image_to_editor', 1, 8);
+
+function image_to_editor($html, $id, $caption, $title, $align, $url, $size, $alt){
+//	print_r($_POST);
+	return $ret = "{$html}-{$id}-{$caption}-{$title}-{$align}-{$url}-{$size}-{$alt}";
+	return $url;
+}
+
 function saveNewObject(){
 //	print_r($_POST);
 

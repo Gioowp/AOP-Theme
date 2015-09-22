@@ -46,19 +46,39 @@
 	<button class="button button-primary  pull-right doAddNewObject">Save</button>
 
 	<label>
-		<textarea name="aopText" placeholder="Write some text here ...." title="Write some text here ...." obId=""></textarea>
+
+
+		<?php
+//		<textarea name="aopText" placeholder="Write some text here ...." title="Write some text here ...." obId=""></textarea>
+
+		$settings = array( 'media_buttons' => true,'quicktags' => false, 'editor_height'=>200 );
+		$content = 'Write some text here .... ';
+		$editor_id = 'aopText';
+		wp_editor( $content, $editor_id,$settings );
+
+		?>
 	</label>
 
 
 	<label>
-		<input name="aopFile" title="Select file" placeholder="Select file" type="file" />
+
+
+		<button class="button insert-media add_media" data-editor="aopFiless" type="button">insert Picture</button>
+
+		<input name="aopFile" id="aopFiless" title="Select picture" placeholder="Select picture" type="text" />
+
+
 	</label>
+
+
 
 	<button class="button button-primary  pull-right doAddNewObject">Save</button>
 
 
 	</form>
 <hr>
+
+
 
 </div>
 <div class="row">
@@ -174,6 +194,9 @@
 
 </div>
 
+<a href="http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg"><img src="http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg" alt="10482906_m1" width="848" height="565" class="alignnone size-full wp-image-40" /></a>
+-40---none-http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg-full-10482906_m1
+
 
 <div class="row aop-objects">
 
@@ -208,7 +231,32 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 </div>
 
 <script>
+
+
+
 	jQuery(window).load(function(e){
+
+		jQuery('body').on('click','[data-editor=aopFiless]', function(e){
+
+
+
+
+			console.log(jQuery(this).val());
+
+			jQuery('#aopFiless').val('');
+
+		});
+
+		jQuery('body').on('change','#aopFiless', function(e){
+
+
+
+
+		console.log(jQuery(this).val());
+
+		});
+
+
 
 
 		///////// live text edit
