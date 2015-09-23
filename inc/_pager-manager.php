@@ -17,6 +17,8 @@
 	.buildPlace{ width:500px; height:250px; background:none; position:relative; overflow:visible; float:left; box-sizing:border-box; border:solid 1px #7f8c8d; margin:40px 50px; }
 	.buildPlace .aopObject{ width:30%; background:#fff; top:0; left:0; position:absolute; overflow:hidden; }
 	.buildPlace .aopObject img{ width:100%; }
+	.buildPlace .aopObject span{ overflow:hidden; }
+	.buildPlace .aopObject span p{ overflow:hidden; padding:0; margin:0; }
 
 	.ui-resizable-se { cursor:se-resize; width:8px; height:8px; background:#ccc; position: absolute; bottom: 1px; right: 1px; opacity:0.5;}
 	.ui-resizable-e{ cursor:e-resize; height: 100%; right: -5px; top: 0; width: 7px; position: absolute;}
@@ -45,7 +47,7 @@
 	<h2 class="pull-left">Add text or upload picture <span class="red note" style="display:none;">Editing selected object..........</span></h2>
 	<button class="button button-primary  pull-right doAddNewObject">Save</button>
 
-	<label>
+	<label id="aopTextLabel">
 
 
 		<?php
@@ -110,7 +112,6 @@
 					<option>easeOutBounce</option>
 				</select>
 
-				<input type="text" name="rotCount" placeholder="xx times" value="0" >
 			</label>
 
 			<label class="zindexConf">
@@ -122,50 +123,6 @@
 				<input type="text" name="animTime" placeholder="Animation time (sec)" value="1" >
 			</label>
 
-				<label>
-					<select name="fSize" title="Text size">
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-						<option>4</option>
-						<option>5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option>10</option>
-						<option>11</option>
-						<option>12</option>
-						<option>13</option>
-						<option>14</option>
-						<option>15</option>
-						<option>16</option>
-						<option>18</option>
-						<option>20</option>
-						<option>22</option>
-						<option>24</option>
-						<option>26</option>
-						<option>28</option>
-						<option>32</option>
-						<option>36</option>
-						<option>40</option>
-						<option>44</option>
-					</select>
-					<select name="fDimension" title="Text size dimension">
-						<option>em</option>
-						<option>px</option>
-						<option>rem</option>
-					</select>
-
-					<select name="fAlign" title="Text align">
-						<option>left</option>
-						<option>center</option>
-						<option>right</option>
-					</select>
-					<input name="fColor" value="#000" type="text" title="Text color" placeholder="Text color">
-
-
-				</label>
 			</div>
 
 			<div class="object-individual-conf aop-object-conf">
@@ -194,8 +151,6 @@
 
 </div>
 
-<a href="http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg"><img src="http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg" alt="10482906_m1" width="848" height="565" class="alignnone size-full wp-image-40" /></a>
--40---none-http://mytest/onepager/wp-content/uploads/2015/09/10482906_m11.jpg-full-10482906_m1
 
 
 <div class="row aop-objects">
@@ -212,7 +167,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		<div class="borderer brdl"></div>
 
 		<div class="objectsBefore buildPlace">
-			<?=aopGetObjectList($rawData,'bf')?>
+			<?=aopGetObjectList($rawData,'bf', $_GET['post'])?>
 		</div>
 	</div>
 
@@ -223,7 +178,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		<div class="borderer brdl"></div>
 
 		<div class="pull-right objectsAfter buildPlace">
-			<?=aopGetObjectList($rawData,'af')?>
+			<?=aopGetObjectList($rawData,'af', $_GET['post'])?>
 		</div>
 	</div>
 
@@ -238,21 +193,14 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		jQuery('body').on('click','[data-editor=aopFiless]', function(e){
 
-
-
-
 			console.log(jQuery(this).val());
-
 			jQuery('#aopFiless').val('');
 
 		});
 
 		jQuery('body').on('change','#aopFiless', function(e){
 
-
-
-
-		console.log(jQuery(this).val());
+			console.log(jQuery(this).val());
 
 		});
 
@@ -265,19 +213,17 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 			var ob = jQuery(this).closest('.aopObject');
 //			console.log( jQuery('span',ob).text() );
 
-			jQuery('.aop-fields textarea[name=aopText]').val(jQuery('span',ob).text()).attr('obId', jQuery(ob).attr('obId')).addClass('liveEdit');
+			jQuery('#aopTextLabel iframe').contents().find('body').html(jQuery('span',ob).html());
+			jQuery('#aopTextLabel').attr('obId', jQuery(ob).attr('obId')).addClass('liveEdit');
 			jQuery('.aop-fields h2 .red.note').show();
+
+
 		});
 
-		jQuery('body').on('keyup','.aop-fields .liveEdit[name=aopText]', function(e){
-			jQuery(".buildPlace .aopObject[obId="+jQuery(this).attr('obId')+"] span").text( jQuery(this).val() );
-		});
 
 		jQuery('body').on('click','.doRemoveOb', function(e){
 			var aopObject = jQuery(this).closest('.aopObject').attr('obId');
 			jQuery('.buildPlace [obId='+aopObject+']').remove();
-
-
 		});
 
 
@@ -297,8 +243,8 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 
 				var formData = new FormData();
-				formData.append('aopText', jQuery('.aop-fields textarea[name=aopText]').val() );
-				formData.append('aopFile', jQuery('.aop-fields input[name=aopFile]')[0].files[0] );
+				formData.append('aopText', jQuery('#aopTextLabel iframe').contents().find('body').html() );
+				formData.append('aopFile', jQuery('.aop-fields input[name=aopFile]').val() );
 				formData.append('postId', <?=$_GET['post']?> );
 				formData.append('action', 'aopaa');
 				formData.append('aa', 'saveNewObject');
@@ -310,11 +256,13 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 					contentType: false,
 					type: 'POST',
 					success: function(data){
+
 //					alert(data);
-						jQuery('.aop-fields textarea[name=aopText]').val('')
+						jQuery('#aopTextLabel iframe').contents().find('body').html('');
 						jQuery('.aop-fields input[name=aopFile]').val('');
 
 						data = jQuery.parseJSON( data );
+						console.log(data);
 						jQuery('.buildPlace.objectsBefore').append(data.bf);
 						jQuery('.buildPlace.objectsAfter').append(data.af);
 
@@ -333,15 +281,22 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 			saveUpdatedObjects();
 		});
 
-		setInterval(saveUpdatedObjects, 30000);
+		//setInterval(saveUpdatedObjects, 30000);
 
 
 
 	jQuery('body').on('mousedown','.aopObject',function(){
+
+		previewLiveText();
+
 		if(jQuery(this).hasClass('active'))return getObParams();
 
-		if( jQuery('.aop-fields textarea[name=aopText]').hasClass('liveEdit') ){
-			jQuery('.aop-fields textarea[name=aopText]').attr('obId','').val('').removeClass('liveEdit');
+
+
+		if( jQuery('#aopTextLabel').hasClass('liveEdit') ){
+
+			jQuery('#aopTextLabel iframe').contents().find('body').html('');
+			jQuery('#aopTextLabel').attr('obId','').removeClass('liveEdit');
 			jQuery('.aop-fields h2 .red.note').hide();
 		}
 
@@ -355,6 +310,18 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		doDragResize();
 	});
+
+
+/// update object view from text editor
+	function previewLiveText(){
+		if( !jQuery('#aopTextLabel').hasClass('liveEdit') )return false;
+
+		var teext = jQuery('#aopTextLabel iframe').contents().find('body').html();
+		jQuery(".buildPlace .aopObject[obId=" + jQuery('.aop-fields label.liveEdit').attr('obId') + "] span").html( teext );
+
+		return;
+	}
+
 
 
 	function doDragResize(){
@@ -377,6 +344,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 		var aopObject = {};
 		var after = {};
+		var textDataJson = {};
 		jQuery('.aop-objects .objectsBefore .aopObject').each(function(e){
 
 			var newBefore = { obType: jQuery(this).attr('obType'),
@@ -384,18 +352,13 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 				rotCount: jQuery(this).attr('rotCount'),
 				zindex: jQuery(this).attr('zindex'),
 				animTime: jQuery(this).attr('animTime'),
-				fSize: jQuery(this).attr('fSize'),
-				fDimension: jQuery(this).attr('fDimension'),
-				fAlign: jQuery(this).attr('fAlign'),
-				fColor: jQuery(this).attr('fColor'),
 				moveLeft: jQuery(this).attr('moveLeft'),
 				moveTop: jQuery(this).attr('moveTop'),
 				opacity: jQuery(this).attr('opacity'),
 				sizeX: jQuery(this).attr('sizeX'),
-				sizeY: jQuery(this).attr('sizeY')
+				sizeY: jQuery(this).attr('sizeY'),
+				animEffect: jQuery(this).attr('animEffect')
 			};
-
-
 
 
 			var afOb = jQuery(".objectsAfter .aopObject[obId="+jQuery(this).attr('obId')+"]");
@@ -405,36 +368,35 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 				rotCount: jQuery(afOb).attr('rotCount'),
 				zindex: jQuery(afOb).attr('zindex'),
 				animTime: jQuery(afOb).attr('animTime'),
-				fSize: jQuery(afOb).attr('fSize'),
-				fDimension: jQuery(afOb).attr('fDimension'),
-				fAlign: jQuery(afOb).attr('fAlign'),
-				fColor: jQuery(afOb).attr('fColor'),
 				moveLeft: jQuery(afOb).attr('moveLeft'),
 				moveTop: jQuery(afOb).attr('moveTop'),
 				opacity: jQuery(afOb).attr('opacity'),
 				sizeX: jQuery(afOb).attr('sizeX'),
-				sizeY: jQuery(afOb).attr('sizeY')
+				sizeY: jQuery(afOb).attr('sizeY'),
+				animEffect: jQuery(afOb).attr('animEffect')
 			};
 
 
 			var source = '';
 			if(jQuery(this).attr('obType')=='text'){
-				source = jQuery('span.data',this).text();
+				source = jQuery('span.data',this).html();
 			}else{
 				source = jQuery('img',this).attr('src');
 			}
 
-			aopObject[jQuery(this).attr('obId')] = {bf: newBefore, af:newAfter, obType:jQuery(this).attr('obType'), data:source  };
+			aopObject[jQuery(this).attr('obId')] = {bf: newBefore, af:newAfter, obType:jQuery(this).attr('obType')  };
+			textDataJson[jQuery(this).attr('obId')] = source;
 //				console.log(e);
 		});
 
 //		console.log(aopObject);
 		var asJson = JSON.stringify(aopObject);
+		var textDataJson = JSON.stringify(textDataJson);
 
 
 		jQuery.ajax({
 			url: dinob.home_url+'/wp-admin/admin-ajax.php',
-			data: { action:'aopaa', aa:'updateObject', data:asJson, postId:<?=$_GET['post']?> },
+			data: { action:'aopaa', aa:'updateObject', data:asJson, textData:textDataJson , postId:<?=$_GET['post']?> },
 			type: 'POST',
 			success: function(data){
 //					alert(data);
@@ -464,11 +426,7 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		jQuery('.panel.aopParams [name=rotCount]').val(jQuery(ob).attr('rotCount'));
 		jQuery('.panel.aopParams [name=zindex]').val(jQuery(ob).attr('zindex'));
 		jQuery('.panel.aopParams [name=animTime]').val(jQuery(ob).attr('animTime'));
-
-		jQuery('.panel.aopParams [name=fSize]').val(jQuery(ob).attr('fSize'));
-		jQuery('.panel.aopParams [name=fDimension]').val(jQuery(ob).attr('fDimension'));
-		jQuery('.panel.aopParams [name=fAlign]').val(jQuery(ob).attr('fAlign'));
-		jQuery('.panel.aopParams [name=fColor]').val(jQuery(ob).attr('fColor'));
+		jQuery('.panel.aopParams [name=animEffect]').val(jQuery(ob).attr('animEffect'));
 
 
 
@@ -495,10 +453,8 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('rotCount', jQuery('.aopParams [name=rotCount]').val());
 		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('zindex', jQuery('.aopParams [name=zindex]').val());
 		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('animTime', jQuery('.aopParams [name=animTime]').val());
-		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('fSize', jQuery('.aopParams [name=fSize]').val());
-		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('fDimension', jQuery('.aopParams [name=fDimension]').val());
-		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('fAlign', jQuery('.aopParams [name=fAlign]').val());
-		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('fColor', jQuery('.aopParams [name=fColor]').val());
+		jQuery('.buildPlace .aopObject[obId='+obId+']').attr('animEffect', jQuery('.aopParams [name=animEffect]').val());
+
 		jQuery(ob).attr('moveLeft', jQuery('.aopParams [name=moveLeft]').val());
 		jQuery(ob).attr('moveTop', jQuery('.aopParams [name=moveTop]').val());
 		jQuery(ob).attr('opacity', jQuery('.aopParams [name=opacity]').val());
@@ -507,13 +463,13 @@ $rawData = aopGetObjectsRaw($_GET['post']);
 
 
 
+
 		jQuery(ob).css({left:jQuery('.aopParams [name=moveLeft]').val()+'px', top:jQuery('.aopParams [name=moveTop]').val()+'px', width:jQuery('.aopParams [name=sizeX]').val(), height:jQuery('.aopParams [name=sizeY]').val() });
 		jQuery('span, img',ob).css({ opacity:jQuery('.aopParams [name=opacity]').val() });
 
 
-		jQuery('.buildPlace .aopObject[obId='+obId+']').css({'z-index':jQuery('.aopParams [name=zindex]').val(), 'text-align':jQuery('.aopParams [name=fAlign]').val() });
+		jQuery('.buildPlace .aopObject[obId='+obId+']').css({'z-index':jQuery('.aopParams [name=zindex]').val() });
 
-		jQuery('.buildPlace .aopObject[obId='+obId+'] span').css({'font-size':jQuery('.aopParams [name=fSize]').val()+''+jQuery('.aopParams [name=fDimension]').val(), 'color':jQuery('.aopParams [name=fColor]').val() });
 
 //		console.log(offset);
 

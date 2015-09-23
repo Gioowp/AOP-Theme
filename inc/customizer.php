@@ -55,11 +55,12 @@ function generateDom($aopData=[], $postId = ''){
 
 	$ret = '';
 	foreach($aopData as $k=>$v){
+		$val = get_post_meta($postId, "aopObjectData_{$k}", true);
 
 		if($v['obType']=='picture'){
-			$ret .= "<img class='aopOb{$postId}{$k} aopOb' postId='{$postId}' obId='{$k}' src='{$v['data']}' />";
+			$ret .= "<img class='aopOb{$postId}{$k} aopOb' postId='{$postId}' obId='{$k}' src='{$val}' />";
 		}else{
-			$ret .= "<div class='aopOb{$postId}{$k} aopOb' postId='{$postId}' obId='{$k}'>{$v['data']}</div> ";
+			$ret .= "<div class='aopOb{$postId}{$k} aopOb' postId='{$postId}' obId='{$k}'>{$val}</div> ";
 		}
 
 	}
@@ -80,7 +81,7 @@ function generateCss($aopData=[], $postId = ''){
 		$top = calcPercent($bf['moveTop'], 'top');
 //		print_r($v);
 
-		$ret .= ".aopObs{$postId} .aopOb{$postId}{$k} { font-size:{$bf['fSize']}{$bf['fDimension']}; z-index:{$bf['zindex']}; text-align:{$bf['fAlign']}; color:{$bf['fColor']}; left:{$left}%; top:{$top}%; width:{$width}%; height:{$height}%; opacity:{$bf['opacity']};  } ";
+		$ret .= ".aopObs{$postId} .aopOb{$postId}{$k} { z-index:{$bf['zindex']}; left:{$left}%; top:{$top}%; width:{$width}%; height:{$height}%; opacity:{$bf['opacity']};  } ";
 
 	}
 
@@ -112,7 +113,7 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
-				easing: 'easeOutCirc',
+				easing: '{$bf['animEffect']}',
 		        complete: function(){
 			      //jQuery( this ).fadeOut(100);
 			    }
@@ -138,7 +139,7 @@ function generateJs($aopData=[], $postId = ''){
 			opacity:'{$bf['opacity']}',
 			deg: {$rotateDirection}{$deg},
 		}, { duration: {$duration},
-				easing: 'easeOutQuint',
+				easing: '{$bf['animEffect']}',
 		        complete: function(){
 			      jQuery( '.aopObs{$postId}' ).fadeOut(300);
 

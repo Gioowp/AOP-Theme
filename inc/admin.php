@@ -16,110 +16,90 @@ function saveNewObject(){
 	$data = get_post_meta($_POST['postId'], 'aopObjects', true);
 	$data = json_decode($data, true);
 
+///// default values
+	$new['bf']['rotDirect'] = 'right';
+	$new['bf']['rotCount'] = '0';
+	$new['bf']['zindex'] = '5';
+	$new['bf']['animTime'] = '1';
+	$new['bf']['moveLeft'] = '0';
+	$new['bf']['moveTop'] = '0';
+	$new['bf']['opacity'] = '1';
+	$new['bf']['sizeX'] = '100';
+	$new['bf']['sizeY'] = '';
+	$new['bf']['animEffect'] = 'easeOutCirc';
 
-	$smartAf = $smartBf = '';
+	$new['af']['rotDirect'] = 'right';
+	$new['af']['rotCount'] = '0';
+	$new['af']['zindex'] = '5';
+	$new['af']['animTime'] = '1';
+	$new['af']['moveLeft'] = '300';
+	$new['af']['moveTop'] = '0';
+	$new['af']['opacity'] = '1';
+	$new['af']['sizeX'] = '100';
+	$new['af']['sizeY'] = '';
+	$new['af']['animEffect'] = 'easeOutCirc';
+
+
+	$smartAf = $smartBf = $textData = $file = '';
 	if(isset($_POST['aopText']) && !empty($_POST['aopText'])){
 
-		$_POST['aopText'] = strip_tags($_POST['aopText']);
+		$textData = $_POST['aopText'];
 
-		$new['bf']['rotDirect'] = 'right';
-		$new['bf']['rotCount'] = '0';
-		$new['bf']['zindex'] = '5';
-		$new['bf']['animTime'] = '1';
-		$new['bf']['fSize'] = '16';
-		$new['bf']['fDimension'] = 'em';
-		$new['bf']['fAlign'] = 'left';
-		$new['bf']['fColor'] = '000';
-		$new['bf']['moveLeft'] = '0';
-		$new['bf']['moveTop'] = '0';
-		$new['bf']['opacity'] = '1';
-		$new['bf']['sizeX'] = '100';
-		$new['bf']['sizeY'] = '';
-
-		$new['af']['rotDirect'] = 'right';
-		$new['af']['rotCount'] = '0';
-		$new['af']['zindex'] = '5';
-		$new['af']['animTime'] = '1';
-		$new['af']['fSize'] = '16';
-		$new['af']['fDimension'] = 'em';
-		$new['af']['fAlign'] = 'left';
-		$new['af']['fColor'] = '000';
-		$new['af']['moveLeft'] = '300';
-		$new['af']['moveTop'] = '0';
-		$new['af']['opacity'] = '1';
-		$new['af']['sizeX'] = '100';
-		$new['af']['sizeY'] = '';
-
-		$new['data'] = $_POST['aopText'];
+//		$new['data'] = $_POST['aopText'];
 		$new['obType'] = 'text';
 
 		$data[] = $new;
+		$newId = count($data)-1;
+		update_post_meta($_POST['postId'], "aopObjectData_{$newId}", $textData);
 
 
 		$idd = count($data)-1;
-		$smartBf .= aopGetObjectCell($new, 'bf', $idd );
-		$smartAf .= aopGetObjectCell($new, 'af', $idd );
+		$smartBf .= aopGetObjectCell($new, 'bf', $idd, $_POST['postId'] );
+		$smartAf .= aopGetObjectCell($new, 'af', $idd, $_POST['postId'] );
 
 	}
 
 	if(isset($_FILES['aopFile'])){
 
-		$uploadedfile = $_FILES['aopFile'];
-		$upload_overrides = array( 'test_form' => false );
-		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+		$file = strip_tags($_POST['aopFile']);
 
-		$new['bf']['rotDirect'] = 'right';
-		$new['bf']['rotCount'] = '0';
-		$new['bf']['zindex'] = '5';
-		$new['bf']['animTime'] = '1';
-		$new['bf']['fSize'] = '16';
-		$new['bf']['fDimension'] = 'em';
-		$new['bf']['fAlign'] = 'left';
-		$new['bf']['fColor'] = '000';
-		$new['bf']['moveLeft'] = '0';
-		$new['bf']['moveTop'] = '0';
-		$new['bf']['opacity'] = '1';
-		$new['bf']['sizeX'] = '100';
-		$new['bf']['sizeY'] = '';
-
-		$new['af']['rotDirect'] = 'right';
-		$new['af']['rotCount'] = '0';
-		$new['af']['zindex'] = '5';
-		$new['af']['animTime'] = '1';
-		$new['af']['fSize'] = '16';
-		$new['af']['fDimension'] = 'em';
-		$new['af']['fAlign'] = 'left';
-		$new['af']['fColor'] = '000';
-		$new['af']['moveLeft'] = '300';
-		$new['af']['moveTop'] = '0';
-		$new['af']['opacity'] = '1';
-		$new['af']['sizeX'] = '100';
-		$new['af']['sizeY'] = '';
-
-		$new['data'] = $movefile['url'];
+//		$new['data'] = $movefile['url'];
 		$new['obType'] = 'picture';
+
 
 		$data[] = $new;
 
+		$newId = count($data)-1;
+		update_post_meta($_POST['postId'], "aopObjectData_{$newId}", $file);
+
+
 		$idd = count($data)-1;
-		$smartBf .= aopGetObjectCell($new, 'bf', $idd );
-		$smartAf .= aopGetObjectCell($new, 'af', $idd );
+		$smartBf .= aopGetObjectCell($new, 'bf', $idd, $_POST['postId'] );
+		$smartAf .= aopGetObjectCell($new, 'af', $idd, $_POST['postId'] );
 	}
 
 
 	$data = json_encode($data);
 	update_post_meta($_POST['postId'], 'aopObjects', $data);
 
-	return json_encode(['bf'=>$smartBf,'af'=>$smartAf]);
+	return json_encode( [ 'bf'=>$smartBf,'af'=>$smartAf ] );
 }
+
 
 
 function updateObject(){
 //	print_r($_POST);
 	$data = json_decode(stripslashes($_POST['data']),true);
-	print_r($data);
+	$textData = json_decode(stripslashes($_POST['textData']),true);
+	print_r($_POST);
 
 	if(!is_array($data))return false;
+
+	if(is_array($textData)){
+		foreach($textData as $k=>$v){
+			update_post_meta($_POST['postId'], 'aopObjectData_'.$k, $v);
+		}
+	}
 
 	$data = json_encode($data);
 	update_post_meta($_POST['postId'], 'aopObjects', $data);
@@ -175,29 +155,34 @@ function aopGetObjectsRaw($postId = 0){
 
 }
 
-function aopGetObjectList($objectsRaw = [], $position='bf'){
+function aopGetObjectList($objectsRaw = [], $position='bf', $postId=''){
 	$ret = '';
+	if(!is_numeric($postId))return false;
 	if(!is_array($objectsRaw))return false;
 
-	foreach($objectsRaw as $k=>$v)$ret .= aopGetObjectCell($v, $position, $k);
+	foreach($objectsRaw as $k=>$v)$ret .= aopGetObjectCell($v, $position, $k,$postId);
 	return $ret;
 
 }
 
-function aopGetObjectCell($objectRaw = 0, $position='', $id=''){
+function aopGetObjectCell($objectRaw = 0, $position='', $id='', $postId = ''){
 //print_r($objectRaw);
 
-	$val = $objectRaw['data'];
+	if(!is_numeric($postId))return false;
+
 	$obType = $objectRaw['obType'];
 	$obType = $obType == 'picture'?$obType:'text';
 //	print_r($objectRaw);
 	$objectRaw = $objectRaw[$position];
 
+	$val = get_post_meta($postId, "aopObjectData_{$id}", true);
+
+
 	$edit = $obType!='picture'?"<div title='Edit above' class='doEditOb acticon'>E</div>":'';
 	if($obType=='picture'){
 		$val = "<img src='{$val}' style='opacity:{$objectRaw['opacity']};' />";
 	}else{
-		$val = "<span class='data' style='opacity:{$objectRaw['opacity']}; color:{$objectRaw['fColor']}; font-size:{$objectRaw['fSize']}{$objectRaw['fDimension']}; '>{$val}</span>";
+		$val = "<span class='data' style='opacity:{$objectRaw['opacity']};'>{$val}</span>";
 	}
 	$ret = "<div class='aopObject' obId = '{$id}'
 				obType='{$obType}'
@@ -205,16 +190,13 @@ function aopGetObjectCell($objectRaw = 0, $position='', $id=''){
 				rotCount='{$objectRaw['rotCount']}'
 				zindex='{$objectRaw['zindex']}'
 				animTime='{$objectRaw['animTime']}'
-				fSize='{$objectRaw['fSize']}'
-				fDimension='{$objectRaw['fDimension']}'
-				fAlign='{$objectRaw['fAlign']}'
-				fColor='{$objectRaw['fColor']}'
 				moveLeft='{$objectRaw['moveLeft']}'
 				moveTop='{$objectRaw['moveTop']}'
 				opacity='{$objectRaw['opacity']}'
 				sizeX='{$objectRaw['sizeX']}'
 				sizeY='{$objectRaw['sizeY']}'
-				style='z-index:{$objectRaw['zindex']};  text-align:{$objectRaw['fAlign']};
+				animEffect='{$objectRaw['animEffect']}'
+				style='z-index:{$objectRaw['zindex']};
 				 left:{$objectRaw['moveLeft']}px; top:{$objectRaw['moveTop']}px;
 				  width:{$objectRaw['sizeX']}px; height:{$objectRaw['sizeY']}px; '
 
